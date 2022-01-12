@@ -22,7 +22,7 @@ public class Controller {
      * @return pojo类
      */
     @RequestMapping(path = "/path01",method = RequestMethod.GET)
-    public User test(){
+    public User test(List<String> list){
         System.out.println("json");
         User user=new User("123","123123");
         return user;
