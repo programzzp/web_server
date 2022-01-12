@@ -6,6 +6,9 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 获取所有配置RestController注解的类
+ */
 public class GetControllerClassJava {
     private List<String> list;
     private List<String> newPath=new ArrayList<String>();

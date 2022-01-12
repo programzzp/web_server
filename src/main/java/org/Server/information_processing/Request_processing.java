@@ -4,12 +4,14 @@ import com.alibaba.fastjson.JSON;
 import org.Server.information_processing.objectfactory.classfactory.GetController.GetRequestMappingInformation;
 import org.Server.pojo.MethodArray;
 import org.Server.request.AnalysisMessage;
+import org.Server.utli.ParameterJudge;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -66,12 +68,67 @@ public class Request_processing {
             QueryFile(url);
             //如果没有参数就访问index.html
         }else{
-            if (stringMethodMap.get(url)!=null&&stringMethodMap.get(url).getRequestMethod().equals("GET")){
+            /**
+             * 如果为GET请求而且map集合中不为null
+             */
+            if (stringMethodMap.get(url)!=null&&stringMethodMap.get(url).getRequestMethod().equals("GET")&&analysisMessage.getMethod().equals("GET")){
                 try {
+                    /**
+                     *
+                     */
                     MethodArray methodArray = stringMethodMap.get(url);
-                    Object invoke = methodArray.getJavaMethod().invoke(methodArray.getJavaClass());
-                    String s = JSON.toJSONString(invoke);
-                    body=s;
+                    /**
+                     * 请全体的处理
+                     */
+                    ParameterJudge judge=new ParameterJudge();
+                    judge.init(methodArray);
+                    boolean b = judge.parameter_Judge();
+                    Object invoke=null;
+                    if (b&&analysisMessage.getRequest_data()!=null){
+                        System.out.println("-----------------------------------------");
+                        System.out.println(analysisMessage.getRequest_data());
+                        List<String> parameter = judge.getParameter(analysisMessage.getRequest_data());
+                        invoke = methodArray.getJavaMethod().invoke(methodArray.getJavaClass(),parameter);
+
+                    }else{
+                        try {
+                            invoke = methodArray.getJavaMethod().invoke(methodArray.getJavaClass());
+                        }catch (Exception e){
+                            invoke="error";
+                        }
+                    }
+                    String json = JSON.toJSONString(invoke);
+                    body=json;
+                    Code=200;
+                    type="json";
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }else if(stringMethodMap.get(url)!=null&&stringMethodMap.get(url).getRequestMethod().equals("POST")&&analysisMessage.getMethod().equals("POST")){
+                try {
+                    /**
+                     *
+                     */
+                    MethodArray methodArray = stringMethodMap.get(url);
+                    ParameterJudge judge=new ParameterJudge();
+                    judge.init(methodArray);
+                    boolean b = judge.parameter_Judge();
+                    Object invoke=null;
+                    if (b){
+                        List<String> parameter = judge.getParameter(analysisMessage.getRequest_data());
+                        invoke = methodArray.getJavaMethod().invoke(methodArray.getJavaClass(),parameter);
+
+                    }else{
+                        try {
+                            invoke = methodArray.getJavaMethod().invoke(methodArray.getJavaClass());
+                        }catch (Exception e){
+                            invoke="error";
+                        }
+                    }
+                    String json = JSON.toJSONString(invoke);
+                    body=json;
                     Code=200;
                     type="json";
                 } catch (IllegalAccessException e) {
@@ -123,7 +180,6 @@ public class Request_processing {
      * @param url 文件名
      */
     private void GetBody(String url){
-        System.out.println("=============================GetBody========================="+type+"=============");
         byte[] bytes=new byte[1024*1024];
         HashMap<String, String> stringStringHashMap = Get_Html_fine.Get_HTML_FILE();
         String file = stringStringHashMap.get(url);
@@ -131,7 +187,6 @@ public class Request_processing {
             FileInputStream inputStream=new FileInputStream(file);
             inputStream.read(bytes);
             if (type.equals("html")||type.equals("css")||type.equals("js")){
-                System.out.println("new String(bytes)"+new String(bytes));
                 body=new String(bytes);
             }else{
                 this.Stream=bytes;

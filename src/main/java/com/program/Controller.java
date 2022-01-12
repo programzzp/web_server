@@ -5,6 +5,8 @@ import org.Server.information_processing.objectfactory.annotation.RequestMapping
 import org.Server.information_processing.objectfactory.annotation.RequestMethod;
 import org.Server.information_processing.objectfactory.annotation.RestController;
 
+import java.util.List;
+
 /**
  * 加入http容器
  * 用spring使用相似
@@ -18,7 +20,8 @@ public class Controller {
      * @return pojo类
      */
     @RequestMapping(path = "/path01",method = RequestMethod.GET)
-    public User test(){
+    public User test(List list){
+        System.out.println(list);
         System.out.println("json");
         User user=new User("123","123123");
         return user;

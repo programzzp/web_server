@@ -52,7 +52,7 @@ public class AnalysisMessage {
                 RequestHead.put(request[0],request[1]);
             }
         }else if(method.equals("POST")){
-            for (int i=1;i<Head.length-1;i++){
+            for (int i=1;i<Head.length-2;i++){
                 String[]  request = Head[i].split(": ");
                 RequestHead.put(request[0],request[1]);
             }
@@ -96,7 +96,10 @@ public class AnalysisMessage {
         }
     }
 
-    public void get_POST_MessageData(){}
+    public void get_POST_MessageData(){
+        Request_data=Head[Head.length-1];
+        System.out.println(Request_data);
+    }
 
     @Override
     public String toString() {
@@ -126,5 +129,9 @@ public class AnalysisMessage {
 
     public String getRequest_data() {
         return Request_data;
+    }
+
+    public String getMethod() {
+        return method;
     }
 }

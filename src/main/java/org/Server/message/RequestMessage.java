@@ -18,7 +18,6 @@ public class RequestMessage {
         analysisMessage.GetMessage(message);
         analysisMessage.analysis_first_head();
 
-        System.out.println(analysisMessage);
         analysisMessage.GetRequestHead();
 
 

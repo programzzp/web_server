@@ -10,7 +10,15 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RequestMapping {
 
+    /**
+     * 请求路径
+     * @return
+     */
     String path() default "";
 
+    /**
+     * 请求方式 默认为GET
+     * @return
+     */
     RequestMethod method() default RequestMethod.GET;
 }

@@ -43,7 +43,12 @@ public class DocumentationResponse implements ResponseChannel {
          * 获取请求体
          */
         String body = request_processing.getBody();
-        ByteBuffer bodyWrap = outBuffer.wrap(body.getBytes());
+        ByteBuffer bodyWrap;
+        if (body==null){
+            bodyWrap = outBuffer.wrap(" ".getBytes());
+        }else{
+            bodyWrap = outBuffer.wrap(body.getBytes());
+        }
         channel.write(bodyWrap);
         return channel;
     }

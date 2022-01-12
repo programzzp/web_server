@@ -6,10 +6,12 @@ import org.Server.information_processing.objectfactory.classfactory.GetControlle
 import org.Server.information_processing.objectfactory.classfactory.Getfilepath.GetFilePathMap;
 import org.Server.pojo.MethodArray;
 import org.Server.utli.Header;
+import org.Server.utli.ParameterJudge;
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,13 +34,22 @@ public class ServerText {
             "Accept-Language: zh-CN,zh;q=0.9";
 
     @Test
-    public void test() throws InvocationTargetException, IllegalAccessException {
+    public void test() throws InvocationTargetException, IllegalAccessException, InstantiationException {
+
+        String name="username=scacdw&password=awdfawv";
+
         GetRequestMappingInformation getRequestMappingInformation=new GetRequestMappingInformation();
         Map<String, MethodArray> stringMethodMap = getRequestMappingInformation.GetMethodString();
 
         MethodArray methodArray = stringMethodMap.get("/path01");
-        Object invoke = methodArray.getJavaMethod().invoke(methodArray.getJavaClass());
-        String s = JSON.toJSONString(invoke);
-        System.out.println(s);
+        ParameterJudge parameterJudge=new ParameterJudge();
+        parameterJudge.init(methodArray);
+        boolean b = parameterJudge.parameter_Judge();
+        if (b){
+            List<String> parameter = parameterJudge.getParameter(name);
+            System.out.println(parameter);
+        }else{
+            System.out.println("");
+        }
     }
 }

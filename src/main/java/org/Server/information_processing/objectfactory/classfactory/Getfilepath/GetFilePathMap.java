@@ -4,14 +4,17 @@ import org.Server.information_processing.objectfactory.annotation.RestController
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-
+/**
+ * 获取com路径下所有的类的class 路径
+ */
 public class GetFilePathMap {
     private List<String> path=new ArrayList<String>();
 
+    /**
+     * 获取路径
+     */
     private final String file_path="src/main/java/com/";
 
 
@@ -20,6 +23,10 @@ public class GetFilePathMap {
         GetJavaFiles(file);
     }
 
+    /**
+     * 遍历所有路径，将class路径保存到List集合中
+     * @param file
+     */
     private void GetJavaFiles(File file){
         File[] fs = file.listFiles();
         for(File f:fs){
@@ -34,6 +41,10 @@ public class GetFilePathMap {
         }
     }
 
+    /**
+     * 返回List集合
+     * @return
+     */
     public List<String> GetClassPath(){
         pathFile();
         return path;
