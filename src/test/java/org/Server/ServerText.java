@@ -4,7 +4,10 @@ import com.alibaba.fastjson.JSON;
 import org.Server.information_processing.objectfactory.classfactory.GetController.GetControllerClassJava;
 import org.Server.information_processing.objectfactory.classfactory.GetController.GetRequestMappingInformation;
 import org.Server.information_processing.objectfactory.classfactory.Getfilepath.GetFilePathMap;
+import org.Server.information_processing.objectres_info.MapMethodArrayInfo;
+import org.Server.information_processing.objectres_info.MapMethodArrayInfoImpl;
 import org.Server.pojo.MethodArray;
+import org.Server.pojo.RespInformation;
 import org.Server.utli.Header;
 import org.Server.utli.ParameterJudge;
 import org.junit.Test;
@@ -12,9 +15,7 @@ import org.junit.Test;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ServerText {
     String data="GET / HTTP/1.1\n" +
@@ -41,15 +42,12 @@ public class ServerText {
         GetRequestMappingInformation getRequestMappingInformation=new GetRequestMappingInformation();
         Map<String, MethodArray> stringMethodMap = getRequestMappingInformation.GetMethodString();
 
-        MethodArray methodArray = stringMethodMap.get("/path01");
-        ParameterJudge parameterJudge=new ParameterJudge();
-        parameterJudge.init(methodArray);
-        boolean b = parameterJudge.parameter_Judge();
-        if (b){
-            List<String> parameter = parameterJudge.getParameter(name);
-            System.out.println(parameter);
-        }else{
-            System.out.println("");
-        }
+        MethodArray methodArray = stringMethodMap.get("/");
+        System.out.println(methodArray);
+
+        MapMethodArrayInfo mapMethodArrayInfo=new MapMethodArrayInfoImpl();
+        boolean b = mapMethodArrayInfo.JustStringMethodMap(stringMethodMap,"/path0");
+        RespInformation respInformation = mapMethodArrayInfo.ReturnRespInformation(stringMethodMap, "/path01", "GET", "username=qwe&password=123");
+        System.out.println(respInformation);
     }
 }

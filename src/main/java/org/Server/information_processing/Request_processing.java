@@ -2,7 +2,10 @@ package org.Server.information_processing;
 
 import com.alibaba.fastjson.JSON;
 import org.Server.information_processing.objectfactory.classfactory.GetController.GetRequestMappingInformation;
+import org.Server.information_processing.objectres_info.MapMethodArrayInfo;
+import org.Server.information_processing.objectres_info.MapMethodArrayInfoImpl;
 import org.Server.pojo.MethodArray;
+import org.Server.pojo.RespInformation;
 import org.Server.request.AnalysisMessage;
 import org.Server.utli.ParameterJudge;
 
@@ -23,6 +26,7 @@ public class Request_processing {
 
     private GetRequestMappingInformation getRequestMappingInformation=new GetRequestMappingInformation();
     private Map<String, MethodArray> stringMethodMap = getRequestMappingInformation.GetMethodString();
+    MapMethodArrayInfo mapMethodArrayInfo=new MapMethodArrayInfoImpl();
 
 
     /**
@@ -59,83 +63,22 @@ public class Request_processing {
      */
     public void url_processing(){
         String url = analysisMessage.getUrl();
-        /**
-         * 如果 为 / 或者 /index.html就访问 index.html文件
-         */
-        if (url.equals("/")||url.equals("/index.html")){
-            url="index.html";
-            this.type=url.split("\\.")[1];
-            QueryFile(url);
-            //如果没有参数就访问index.html
+
+
+        if (mapMethodArrayInfo.JustStringMethodMap(stringMethodMap, url)){
+            RespInformation respInformation = mapMethodArrayInfo.ReturnRespInformation(stringMethodMap, url, analysisMessage.getMethod(), analysisMessage.getRequest_data());
+            body=respInformation.getBody();
+            Code=respInformation.getCode();
+            type=respInformation.getType();
         }else{
             /**
-             * 如果为GET请求而且map集合中不为null
+             * 如果 为 / 或者 /index.html就访问 index.html文件
              */
-            if (stringMethodMap.get(url)!=null&&stringMethodMap.get(url).getRequestMethod().equals("GET")&&analysisMessage.getMethod().equals("GET")){
-                try {
-                    /**
-                     *
-                     */
-                    MethodArray methodArray = stringMethodMap.get(url);
-                    /**
-                     * 请全体的处理
-                     */
-                    ParameterJudge judge=new ParameterJudge();
-                    judge.init(methodArray);
-                    boolean b = judge.parameter_Judge();
-                    Object invoke=null;
-                    if (b&&analysisMessage.getRequest_data()!=null){
-                        System.out.println("-----------------------------------------");
-                        System.out.println(analysisMessage.getRequest_data());
-                        List<String> parameter = judge.getParameter(analysisMessage.getRequest_data());
-                        invoke = methodArray.getJavaMethod().invoke(methodArray.getJavaClass(),parameter);
-
-                    }else{
-                        try {
-                            invoke = methodArray.getJavaMethod().invoke(methodArray.getJavaClass());
-                        }catch (Exception e){
-                            invoke="error";
-                        }
-                    }
-                    String json = JSON.toJSONString(invoke);
-                    body=json;
-                    Code=200;
-                    type="json";
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                }
-            }else if(stringMethodMap.get(url)!=null&&stringMethodMap.get(url).getRequestMethod().equals("POST")&&analysisMessage.getMethod().equals("POST")){
-                try {
-                    /**
-                     *
-                     */
-                    MethodArray methodArray = stringMethodMap.get(url);
-                    ParameterJudge judge=new ParameterJudge();
-                    judge.init(methodArray);
-                    boolean b = judge.parameter_Judge();
-                    Object invoke=null;
-                    if (b){
-                        List<String> parameter = judge.getParameter(analysisMessage.getRequest_data());
-                        invoke = methodArray.getJavaMethod().invoke(methodArray.getJavaClass(),parameter);
-
-                    }else{
-                        try {
-                            invoke = methodArray.getJavaMethod().invoke(methodArray.getJavaClass());
-                        }catch (Exception e){
-                            invoke="error";
-                        }
-                    }
-                    String json = JSON.toJSONString(invoke);
-                    body=json;
-                    Code=200;
-                    type="json";
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                }
+            if (url.equals("/")||url.equals("/index.html")){
+                url="index.html";
+                this.type=url.split("\\.")[1];
+                QueryFile(url);
+                //如果没有参数就访问index.html
             }else{
                 /**
                  * 去除请求中路径的  /

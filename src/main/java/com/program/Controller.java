@@ -20,8 +20,8 @@ public class Controller {
      * @return pojo类
      */
     @RequestMapping(path = "/path01",method = RequestMethod.GET)
-    public User test(List list){
-        System.out.println(list);
+    public Object test(List res){
+        System.out.println(res);
         System.out.println("json");
         User user=new User("123","123123");
         return user;
@@ -29,7 +29,7 @@ public class Controller {
 
 
     @RequestMapping(path = "/path02",method = RequestMethod.GET)
-    public User test1(){
+    public Object test1(){
         User user=new User("fwqdv fvdfcf","qw ecwwfeqwdfw");
         return user;
     }

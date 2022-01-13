@@ -37,8 +37,6 @@ public class ResponseData {
     public SocketChannel ReturnResponse(ByteBuffer outBuffer, SocketChannel channel) throws IOException {
 
         String phrase = ContextType.Phrase(request_processing.getType());
-        System.out.println(phrase);
-        System.out.println(request_processing.getType());
         String[] split = phrase.split("/");
         if (split[0].equals("image")){
             responseChannel=new StreamResponse();
