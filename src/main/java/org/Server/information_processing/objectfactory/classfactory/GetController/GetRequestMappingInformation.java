@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 获取所有
+ */
 public class GetRequestMappingInformation {
     private List<String> list;
     private Map<String,MethodArray> methodString=new HashMap<String, MethodArray>();

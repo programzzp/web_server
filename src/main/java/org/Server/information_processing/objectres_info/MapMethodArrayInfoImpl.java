@@ -9,10 +9,23 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ *
+ */
 public class MapMethodArrayInfoImpl implements MapMethodArrayInfo{
 
 
+    /**
+     *
+     * @param stringMethodMap map容器
+     * @param url 请求的url
+     * @return
+     */
     public boolean JustStringMethodMap(Map<String, MethodArray> stringMethodMap, String url) {
+        /**
+         * 判断容器中没有数据获取没有指定的url
+         */
         if (stringMethodMap.keySet().size()==0||stringMethodMap.get(url)==null){
             return false;
         }else{
@@ -20,6 +33,14 @@ public class MapMethodArrayInfoImpl implements MapMethodArrayInfo{
         }
     }
 
+    /**
+     *
+     * @param stringMethodMap map容器
+     * @param url 请求的url
+     * @param method 请求方式
+     * @param res_data 请求数据
+     * @return
+     */
     public RespInformation ReturnRespInformation(Map<String, MethodArray> stringMethodMap, String url, String method,String res_data) {
 
         if (stringMethodMap.get(url).getRequestMethod().equals(method)){
