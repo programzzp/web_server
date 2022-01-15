@@ -1,6 +1,7 @@
 package org.Server.information_processing.objectfactory.classfactory.GetController;
 
 import org.Server.information_processing.objectfactory.annotation.RequestMapping;
+import org.Server.information_processing.objectfactory.classfactory.GetController.AnnotationContainer.GetControllerClassJava;
 import org.Server.pojo.MethodArray;
 
 import java.lang.annotation.Annotation;
@@ -14,6 +15,9 @@ import java.util.Map;
  */
 public class GetRequestMappingInformation {
     private List<String> list;
+    /**
+     * 要返回的响应信息
+     */
     private Map<String,MethodArray> methodString=new HashMap<String, MethodArray>();
     public GetRequestMappingInformation(){
         GetControllerClassJava getControllerClassJava=new GetControllerClassJava();
