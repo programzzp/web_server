@@ -134,4 +134,6 @@ public class AnalysisMessage {
     public String getMethod() {
         return method;
     }
+
+
 }

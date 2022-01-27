@@ -1,5 +1,7 @@
 package org.Server;
 
+import org.Server.DataCoding.WebSocketReceive;
+import org.Server.DataCoding.WebSocketSend;
 import org.Server.message.RequestMessage;
 
 import java.io.IOException;
@@ -15,6 +17,7 @@ import java.util.Iterator;
 public class Server {
 
     RequestMessage message=new RequestMessage();
+
     private Selector selector;
 
     public void init() throws IOException {
@@ -68,9 +71,30 @@ public class Server {
         // 读取数据
         int read = channel.read(buffer);
         if (read>0){
+
+            SocketChannel channel1=null;
+
+
+
             String request = new String(buffer.array()).trim();
-            SocketChannel channel1 = message.request_init(request, buffer, channel);
-            channel1.close();
+
+
+            byte[] bytes = request.getBytes("UTF-8");
+            if (bytes[0]<0){
+                //websocket数据接收与响应头处理
+                WebSocketReceive webSocketUtil=new WebSocketReceive();
+                webSocketUtil.processBuffer(channel, buffer);
+            }else{
+                channel1 = message.request_init(request, buffer, channel);
+            }
+
+            if (channel1!=null){
+                channel1.close();
+                buffer.clear();
+                System.out.println(channel.isOpen());
+            }
+
+
         }else{
             System.out.println("客户端关闭");
             key.cancel();

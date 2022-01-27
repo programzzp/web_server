@@ -1,5 +1,7 @@
 package org.Server;
 
+import org.Server.DataCoding.WebSocketReceive;
+import org.Server.DataCoding.WebsocketCoding;
 import org.Server.information_processing.objectfactory.classfactory.GetController.AnnotationContainer.GetControllerClassJava;
 import org.Server.information_processing.objectfactory.classfactory.GetController.GetRequestMappingInformation;
 import org.Server.information_processing.objectres_info.MapMethodArrayInfo;
@@ -8,7 +10,12 @@ import org.Server.pojo.MethodArray;
 import org.Server.pojo.RespInformation;
 import org.junit.Test;
 
+import javax.xml.bind.DatatypeConverter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 public class ServerText {
@@ -53,5 +60,52 @@ public class ServerText {
         for (String s : list) {
             System.out.println(s);
         }
+    }
+
+
+    @Test
+    public void test03() throws NoSuchAlgorithmException {
+        MessageDigest instance = MessageDigest.getInstance("SHA-1");
+        byte[] digest = instance.digest("6qI3SVmZrtYu2QGxt/N+/w==".getBytes());
+        BigInteger no = new BigInteger(1, digest);
+        String hashtext = no.toString(16);
+        hashtext=hashtext+hashtext;
+        System.out.println(hashtext);
+        while (hashtext.length() < 32) {
+            hashtext = "0" + hashtext;
+        }
+        System.out.println(hashtext);
+    }
+
+    @Test
+    public void base_64() throws UnsupportedEncodingException {
+        String key="6qI3SVmZrtYu2QGxt/N+/w==";
+        byte[] bytes = key.getBytes("utf-8");
+        String s = DatatypeConverter.printBase64Binary(bytes);
+        System.out.println(s);
+    }
+
+    @Test
+    public  void coding(){
+        WebsocketCoding coding=new WebsocketCoding();
+        String s = coding.secWebSocketAccept("w4v7O6xFTi36lq3RNcgctw==");
+        System.out.println(s);
+    }
+
+
+    @Test
+    public void biteDemo(){
+        byte data=126;
+        WebSocketReceive socketUtil=new WebSocketReceive();
+        socketUtil.Byte8Fill_in(data);
+        int i = Integer.parseUnsignedInt("01101010", 2);
+        System.out.println(i);
+    }
+
+
+    @Test
+    public void Byte(){
+        int unsignedInt = Byte.toUnsignedInt((byte) (0x80|1));
+        System.out.println(Integer.toBinaryString(unsignedInt));
     }
 }

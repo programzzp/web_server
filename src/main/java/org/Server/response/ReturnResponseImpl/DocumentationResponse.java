@@ -50,6 +50,9 @@ public class DocumentationResponse implements ResponseChannel {
             bodyWrap = outBuffer.wrap(body.getBytes());
         }
         channel.write(bodyWrap);
+
+        channel.close();
+
         return channel;
     }
 }
