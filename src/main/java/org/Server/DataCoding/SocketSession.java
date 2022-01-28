@@ -15,4 +15,8 @@ public class SocketSession {
     public static ConnectLogo getSESSION(String username) {
         return SESSION.get(username);
     }
+
+    public static Map<String,ConnectLogo> returnSession(){
+        return SESSION;
+    }
 }

@@ -1,9 +1,19 @@
 package org.Server.DataCoding;
 
 
+import org.Server.information_processing.objectfactory.classfactory.GetController.AnnotationContainer.GetControllerClassJava;
+import org.Server.information_processing.objectfactory.classfactory.GetController.AnnotationContainer.GetServerEndpointClassJava;
+
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -49,40 +59,78 @@ public class WebSocketReceive {
     WebSocketSend webSocketSend=new WebSocketSend();
 
 
+    GetServerEndpointClassJava getServerEndpointClassJava=new GetServerEndpointClassJava();
+
+
     public void processBuffer(SocketChannel channel,ByteBuffer outBuffer){
-        System.out.println("channel="+channel.getClass().hashCode());
-        System.out.println("outBuffer="+outBuffer.getClass().hashCode());
+        System.out.println("连接后的channel="+channel.hashCode());
         byte[] buffer = outBuffer.array();
+
+//        for (byte b : buffer) {
+//            int unsignedInt = Byte.toUnsignedInt(b);
+//            String s = Integer.toBinaryString(unsignedInt);
+//            System.out.print(s+"  ");
+//        }
+//        System.out.println("\r\n");
+
         this.buf=buffer;
         this.ParseFirst8Byte(buffer[0]);
         this.ParseSecond8Byte(buffer[1]);
         this.DataLength();
-        String s = this.MASK_data();
-        ConnectLogo session = SocketSession.getSESSION("/webSocket/username");
-        webSocketSend.send(session.getChannel(),s,session.getByteBuffer());
+        if (this.opcode==8){
+            this.close(channel);
+        }else{
+            String s = this.MASK_data();
+
+            /**
+             * 获取消息处理方法
+             */
+            GetServerEndpointClassJava getServerEndpointClassJava = this.getServerEndpointClassJava;
+            List<String> list = getServerEndpointClassJava.GetClassAnnotationPath();
+            for (String message : list) {
+                Class<?> aClass = null;
+                try {
+                    aClass = Class.forName(message);
+                    Method[] methods = aClass.getMethods();
+                    for (Method method : methods) {
+                        if (method.getName().equals("onMessage")){
+                            method.invoke(aClass.newInstance(),s);
+                        }
+                    }
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public void ParseFirst8Byte(byte first_byte8){
 
         String First8Byte=Integer.toBinaryString(Byte.toUnsignedInt(first_byte8));
         this.FIN= (byte) (((byte)First8Byte.charAt(0))-48);
-        //System.out.println("FIN="+this.FIN);
+        System.out.println("FIN="+this.FIN);
 
         this.opcode= (byte) (first_byte8&0xf);
-        //System.out.println("opcode="+opcode);
+        System.out.println("opcode="+opcode);
 
     }
 
     public void ParseSecond8Byte(byte second_byte8){
         java.lang.String Second8Byte = Integer.toBinaryString(Byte.toUnsignedInt(second_byte8));
         this.MASK=(byte) (((byte)Second8Byte.charAt(0))-48);
-        //System.out.println("MASK="+this.MASK);
+        System.out.println("MASK="+this.MASK);
 
         /**
          *
          */
         this.len=second_byte8&0x7F;
-        //System.out.println("len="+this.len);
+        System.out.println("len="+this.len);
     }
 
     /**
@@ -198,6 +246,47 @@ public class WebSocketReceive {
 
         return Integer.parseUnsignedInt(data, 2);
 
+    }
+
+    /**
+     * 关闭连接
+     * @param channel
+     */
+    public void close(SocketChannel channel){
+        Map<String, ConnectLogo> stringConnectLogoMap = SocketSession.returnSession();
+        Set<String> strings = stringConnectLogoMap.keySet();
+
+        for (String username : strings) {
+            if (SocketSession.getSESSION(username).getChannel().equals(channel)){
+                List<String> list = getServerEndpointClassJava.GetClassAnnotationPath();
+                for (String message : list) {
+                    Class<?> aClass = null;
+                    try {
+                        aClass = Class.forName(message);
+                        Method[] methods = aClass.getMethods();
+                        for (Method method : methods) {
+                            if (method.getName().equals("onClose")){
+                                method.invoke(aClass.newInstance(),username);
+                            }
+                        }
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (InstantiationException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+                }
+                //关闭连接
+                try {
+                    channel.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 }

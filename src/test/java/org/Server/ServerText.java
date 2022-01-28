@@ -2,7 +2,9 @@ package org.Server;
 
 import org.Server.DataCoding.WebSocketReceive;
 import org.Server.DataCoding.WebsocketCoding;
+import org.Server.information_processing.objectfactory.classfactory.GetController.AnnotationContainer.GetAnnotationContainer;
 import org.Server.information_processing.objectfactory.classfactory.GetController.AnnotationContainer.GetControllerClassJava;
+import org.Server.information_processing.objectfactory.classfactory.GetController.AnnotationContainer.GetServerEndpointClassJava;
 import org.Server.information_processing.objectfactory.classfactory.GetController.GetRequestMappingInformation;
 import org.Server.information_processing.objectres_info.MapMethodArrayInfo;
 import org.Server.information_processing.objectres_info.MapMethodArrayInfoImpl;
@@ -105,7 +107,8 @@ public class ServerText {
 
     @Test
     public void Byte(){
-        int unsignedInt = Byte.toUnsignedInt((byte) (0x80|1));
-        System.out.println(Integer.toBinaryString(unsignedInt));
+        GetServerEndpointClassJava serverEndpointClassJava= new GetServerEndpointClassJava();
+        List<String> list = serverEndpointClassJava.GetClassAnnotationPath();
+        System.out.println(list);
     }
 }

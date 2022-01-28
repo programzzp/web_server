@@ -11,6 +11,11 @@ import java.nio.channels.SocketChannel;
  */
 public class WebSocketSend {
 
+    public void send(String username,String message){
+        ConnectLogo session = SocketSession.getSESSION(username);
+        this.send(session.getChannel(),message,session.getByteBuffer());
+    }
+
     public void send(SocketChannel channel, String data, ByteBuffer outBuffer){
         ByteBuffer wrap = outBuffer.wrap(send_DataCode(data));
 

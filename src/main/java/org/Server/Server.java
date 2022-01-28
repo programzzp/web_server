@@ -91,7 +91,6 @@ public class Server {
             if (channel1!=null){
                 channel1.close();
                 buffer.clear();
-                System.out.println(channel.isOpen());
             }
 
 

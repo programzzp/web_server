@@ -44,6 +44,8 @@ public class StreamResponse implements ResponseChannel {
         byte[] stream = request_processing.getStream();
         ByteBuffer streamWrap = outBuffer.wrap(stream);
         channel.write(streamWrap);
+
+        channel.close();
         return channel;
     }
 }
