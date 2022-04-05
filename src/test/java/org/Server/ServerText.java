@@ -107,8 +107,13 @@ public class ServerText {
 
     @Test
     public void Byte(){
-        GetServerEndpointClassJava serverEndpointClassJava= new GetServerEndpointClassJava();
-        List<String> list = serverEndpointClassJava.GetClassAnnotationPath();
-        System.out.println(list);
+        short number=0x0000;
+        int p1=0;
+        byte[] bytes=new byte[2];
+        bytes[0]=0x78;
+        bytes[1]= (byte) 0xfa;
+        
+
+        System.out.println(Short.toUnsignedInt(number));
     }
 }

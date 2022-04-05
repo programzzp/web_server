@@ -110,10 +110,14 @@ public class WebSocketReceive {
         }
     }
 
+
+    /**
+     * 获取
+     * @param first_byte8
+     */
     public void ParseFirst8Byte(byte first_byte8){
 
-        String First8Byte=Integer.toBinaryString(Byte.toUnsignedInt(first_byte8));
-        this.FIN= (byte) (((byte)First8Byte.charAt(0))-48);
+        this.FIN= (byte)(Byte.toUnsignedInt(first_byte8)>>7);
         System.out.println("FIN="+this.FIN);
 
         this.opcode= (byte) (first_byte8&0xf);
@@ -122,8 +126,8 @@ public class WebSocketReceive {
     }
 
     public void ParseSecond8Byte(byte second_byte8){
-        java.lang.String Second8Byte = Integer.toBinaryString(Byte.toUnsignedInt(second_byte8));
-        this.MASK=(byte) (((byte)Second8Byte.charAt(0))-48);
+
+        this.MASK=(byte) (Byte.toUnsignedInt(second_byte8)>>7);
         System.out.println("MASK="+this.MASK);
 
         /**
@@ -148,6 +152,7 @@ public class WebSocketReceive {
          */
         if (len==126){
             this.len=this.readUInt16BE_len();
+            System.out.println("this。len="+this.len);
             this.idx+=2;
         }else if(len==127){
             this.idx+=8;
@@ -240,11 +245,13 @@ public class WebSocketReceive {
         byte[] bytes=new byte[2];
         for (int i=2;i<4;i++){
             bytes[i-2]=this.buf[i];
+            System.out.println("buf"+this.buf[i]);
         }
 
-        String data = Byte8Fill_in(bytes[0])+Byte8Fill_in(bytes[1]);
+        short h_byte= (short) (bytes[0]<<8);
+        int l_byte = Byte.toUnsignedInt(bytes[1]);
 
-        return Integer.parseUnsignedInt(data, 2);
+        return h_byte^l_byte;
 
     }
 

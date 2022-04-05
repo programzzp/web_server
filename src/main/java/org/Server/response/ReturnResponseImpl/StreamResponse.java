@@ -32,6 +32,7 @@ public class StreamResponse implements ResponseChannel {
          */
         String phrase = ContextType.Phrase(request_processing.getType());
         String header = resp.Header(analysisMessage.getHttp_version(), request_processing.getCode(), phrase);
+        System.out.println(header);
         /**
          * 发送请求头
          */
